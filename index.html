@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+       <div class="search">
+            <input type="text" placeholder="enter city name" spellcheck="false">
+            <button><img src="images/search.png"></button>
+        </div>
+        <div class="weather">
+            <img src="images/rain.png" class="weather-icon">
+            <h1 class="temp">22°c</h1>
+            <h2 class="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png">
+                    <div>
+                        <p class="wind">515 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apikey = "85c169a3d8d4f55d1f9e5ab85a8271c5";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        const apiUrl2="https://api.openweathermap.org/data/2.5/weather?units=metric"
+
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button")
+        const weatherIcon = document.querySelector(".weather-icon")
+
+        function getLocation() {
+        if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(showPosition);
+         } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+        }
+        async function showPosition(position){
+            const lat=position.coords.latitude;
+            const lon=position.coords.longitude;
+            console.log(lat,lon)
+            // const apiUrl2="https://api.openweathermap.org/data/2.5/weather?units=metriclat=19.0492392&lon=72.86166&appid=85c169a3d8d4f55d1f9e5ab85a8271c5"
+            const response2 = await fetch(apiUrl2+ `&lat=${lat}` + `&lon=${lon}` + `&appid=${apikey}`);
+            var data2 = await response2.json();
+            console.log(data2);
+            document.querySelector(".city").innerHTML=data2.name;
+            document.querySelector(".temp").innerHTML=Math.round(data2.main.temp) + "°c";
+            document.querySelector(".humidity").innerHTML=data2.main.humidity + "%";
+            document.querySelector(".wind").innerHTML=data2.wind.speed + " km/h";
+
+            if(data2.weather[0].main=="Clouds"){
+                weatherIcon.src="images/clouds.png";
+            }else if(data2.weather[0].main=="Clear"){
+                weatherIcon.src="images/clear.png";
+            }else if(data2.weather[0].main=="Rain"){
+                weatherIcon.src="images/rain.png";
+            }else if(data2.weather[0].main=="Drizzle"){
+                weatherIcon.src="images/drizzle.png";
+            }else if(data2.weather[0].main=="Mist"){
+                weatherIcon.src="images/mist.png";
+            }else{
+                weatherIcon.src="images/clouds.png";
+            }
+
+            document.querySelector(".weather").style.display="block";
+        }
+
+        async function checkWeather(city){
+            const response = await fetch(apiUrl+ city + `&appid=${apikey}`);
+            var data = await response.json();
+
+            console.log(data);
+
+            document.querySelector(".city").innerHTML=data.name;
+            document.querySelector(".temp").innerHTML=Math.round(data.main.temp) + "°c";
+            document.querySelector(".humidity").innerHTML=data.main.humidity + "%";
+            document.querySelector(".wind").innerHTML=data.wind.speed + " km/h";
+
+            if(data.weather[0].main=="Clouds"){
+                weatherIcon.src="images/clouds.png";
+            }else if(data.weather[0].main=="Clear"){
+                weatherIcon.src="images/clear.png";
+            }else if(data.weather[0].main=="Rain"){
+                weatherIcon.src="images/rain.png";
+            }else if(data.weather[0].main=="Drizzle"){
+                weatherIcon.src="images/drizzle.png";
+            }else if(data.weather[0].main=="Mist"){
+                weatherIcon.src="images/mist.png";
+            }else{
+                weatherIcon.src="images/clouds.png";
+            }
+
+            document.querySelector(".weather").style.display="block";
+        }
+        searchBtn.addEventListener("click", ()=>{
+            checkWeather(searchBox.value);
+        })
+        getLocation();
+    </script>
+
+</body>
+</html>
